@@ -28,6 +28,14 @@ app.get('/api/items/:id', (req, res) => {
     });
 });
 
+// 1. GET all items
+app.get('/api/items', (req, res) => {
+    res.json({
+        success: true,
+        data: items
+    });
+});
+
 // 3. POST to create a new item
 app.post('/api/items', (req, res) => {
     const { name, description } = req.body;
