@@ -30,9 +30,25 @@ app.get('/api/items/:id', (req, res) => {
 
 // 1. GET all items
 app.get('/api/items', (req, res) => {
+    // Pagination logic
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const paginatedItems = items.slice(startIndex, endIndex);
+
+    // Pagination metadata
+    const total = items.length;
+    const totalPages = Math.ceil(total / limit);
+
     res.json({
         success: true,
-        data: items
+        data: paginatedItems,
+        page,
+        count: paginatedItems.length,
+        total,
+        totalPages
     });
 });
 
