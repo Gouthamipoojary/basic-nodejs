@@ -63,6 +63,34 @@ app.get('/api/items', (req, res) => {
     });
 });
 
+// Search &amp; Filter API
+app.get('/api/items/search', (req, res) => {
+    const { q, sortBy, order } = req.query;
+
+    let filteredItems = items;
+
+    if (q) {
+        filteredItems = filteredItems.filter(item => 
+            item.name.toLowerCase().includes(q.toLowerCase()) || 
+            item.description.toLowerCase().includes(q.toLowerCase())
+        );
+    }
+
+    // Handle sorting
+    const sortOrder = order === 'desc' ? -1 : 1;
+    filteredItems.sort((a, b) => {
+        if (sortBy === 'name' || sortBy === 'description') {
+            return (a[sortBy] > b[sortBy] ? 1 : -1) * sortOrder;
+        }
+        return (a.id - b.id) * sortOrder;
+    });
+
+    res.json({
+        success: true,
+        data: filteredItems
+    });
+});
+
 // 3. POST to create a new item
 app.post('/api/items', (req, res) => {
     const { name, description } = req.body;
