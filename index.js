@@ -42,11 +42,22 @@ app.get('/api/items', (req, res) => {
     const total = items.length;
     const totalPages = Math.ceil(total / limit);
 
+    // Handle sorting
+    const sortBy = req.query.sortBy || 'id';
+    const order = req.query.order === 'desc' ? -1 : 1;
+
+    const sortedItems = [...paginatedItems].sort((a, b) => {
+        if (sortBy === 'name' || sortBy === 'description') {
+            return (a[sortBy] > b[sortBy] ? 1 : -1) * order;
+        }
+        return (a.id - b.id) * order;
+    });
+
     res.json({
         success: true,
-        data: paginatedItems,
+        data: sortedItems,
         page,
-        count: paginatedItems.length,
+        count: sortedItems.length,
         total,
         totalPages
     });
